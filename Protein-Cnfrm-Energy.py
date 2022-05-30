@@ -1,50 +1,37 @@
-import numpy as np
+#!/usr/bin/env python
+# Check amino-acid frequency in the PDB database (or it's subset)
+# by reading meta-data from mmCIF files.
 
-database = open("pdb_seqres.txt", 'r')
-while True:
-    line = database.readline()
-    if (!(line) == '>' || line.len())
+from __future__ import print_function
+import sys
+import os
+from collections import Counter
+from gemmi import cif, CifWalk, expand_if_pdb_code
 
-        #length of an amino acid sequence
-        aa_seq_length = line.len()
+# import the following files (sidechain_files) for:
+# the list of amino acids
+# the table for the different types of combinations of hydrogen bonds for a pair of amino acids (20x20 matrix)
+# the table for the probability that a given hydrogen bond will form between two amino acids (20x20 matrix)
+# import the variables for the sidechain sidechain matrix
+import sidechain_files
+import sidechain_variables
 
-        # kronecker delta matrix
-        for i in range(aa_seq_length):
-                Rij.append([])
-                for j in range(aa_seq_length):
-                    ith_index = i
-                    jth_index = j
-                    Rij[i].append("d(r" + str(ith_index) + " " +"- r" + str(jth_index) + " " + "- r)" )
 
-        # hamiltonian matrix
-        for i in range(aa_seq_length):
-            Hij.append([])
-            for j in range(aa_seq_length):
-                prob = Eij[seq_index0[i]][seq_index0[j]]
-                Hij[i].append(prob)
+# this function returns the path from a directory
+# otherwise it will return the pdb code
+def get_file_paths_from_args():
+    for arg in sys.argv[1:]:
+        if os.path.isdir(arg):
+            for path in CifWalk(arg):
+                yield path
+        else:
+            yield expand_if_pdb_code(arg)
 
-        # tensor product of Mij and Kij
-        for i in range(aa_sequence_length):
-            Dij.append([])
-            for j in range(m):
-                    prob = Mij[i][j]
-                    Dij[i].append(prob)
-
-        # steric hinderance correction
-        for i in range(aa_seq_length):
-            Es.append([])
-            for j in range(aa_seq_length):
-                    prob = str(2.26006e-22) + str(Mij[i][j]) + Rij[i][j]
-                    Es[i].append(prob)
-
-        # Energy corresponding to the sidechains
-        for i in range(aa_seq_length):
-            Hsc.append([])
-            for j in range(aa_seq_length):
-                prob = Hij[i][j] * Dij[i][j]
-                if i == j + 1 or j == i + 1:
-                    Hsc[i].append(prob)
-                else:
-                    Hsc[i].append(0)
-
-database.close()
+n = 0
+for path in get_file_paths_from_args():
+    # read file (uncompressing on the fly) and get the only block
+    print(n)
+    n = n + 1
+    block = cif.read(path).sole_block()
+    # find table with the sequence
+    seq = block.find('_entity_poly_seq.', ['entity_id', 'mon_id'])
