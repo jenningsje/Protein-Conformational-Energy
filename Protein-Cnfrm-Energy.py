@@ -1,22 +1,21 @@
 #!/usr/bin/env python
-# Check amino-acid frequency in the PDB database (or it's subset)
-# by reading meta-data from mmCIF files.
 
+""" Obtain the conformational entropy for every protein (cif file or gzipped cif file) within a given directory """
 from __future__ import print_function
 import sys
 import os
 from collections import Counter
+import gemmi
 from gemmi import cif, CifWalk, expand_if_pdb_code
 
-# import the following files (sidechain_files) for:
-# the list of amino acids
-# the table for the different types of combinations of hydrogen bonds for a pair of amino acids (20x20 matrix)
-# the table for the probability that a given hydrogen bond will form between two amino acids (20x20 matrix)
-# import the variables for the sidechain sidechain matrix
+""" import the following files containing:
+(1) the list of amino acids
+(2) the table for the different types of combinations of hydrogen bonds between a pair of amino acids (20x20 matrix)
+(3) the table for the probability that a given hydrogen bond will form between two amino acids (20x20 matrix)
+(4) import the variables for the sidechain sidechain matrix """
 import sc_imports
 
-# this function returns the path from a directory
-# otherwise it will return the pdb code
+# this function returns the path from a directory specified by the user otherwise it will return the pdb code
 def get_file_paths_from_args():
     for arg in sys.argv[1:]:
         if os.path.isdir(arg):
@@ -26,11 +25,25 @@ def get_file_paths_from_args():
             yield expand_if_pdb_code(arg)
 
 n = 0
+
 for path in get_file_paths_from_args():
-    # read file (uncompressing on the fly) and get the only block
-    print(n)
-    n = n + 1
+
+    # read the crystallographic information file (uncompressing it on the fly)
     gemmi.read_structure(path, format=gemmi.CoorFormat.Detect)
 
-    #determine the side_chain interaction energy
+    """ obtain the following from each cif file:
+    (1) the atom symbol: '_atom_site.type_symbol'
+    (2) the monomer that the atom is a member of: '_atom_site.label_comp_id'
+    (3) the x coordinate of the atom: 'atom_site.Cartn_x'
+    (4) the y coordinate of the atom: 'atom_site.Cartn_y'
+    (5) the z coordinate of the atom: 'atom_site.Cartn_z' """
+    cif_file = cif.read(path)
+    cif_block = cif_file.sole_block()
+    
+    for row in cif_block.find_loop('_atom_site.type_symbol'): print(row)
+    
+    # determine the side_chain interaction energy
 
+    # ***** WARNING: TYPE SOMETHING HERE LATER *****
+    n = n + 1
+    print(n)
