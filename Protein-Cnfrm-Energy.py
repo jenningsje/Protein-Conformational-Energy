@@ -16,8 +16,10 @@ from numpy import genfromtxt
 (1) the list of amino acids
 (2) the table for the different types of combinations of hydrogen bonds between a pair of amino acids (20x20 matrix)
 (3) the table for the probability that a given hydrogen bond will form between two amino acids (20x20 matrix)
-(4) import the variables for the sidechain sidechain matrix """
+(4) import the variables for the sidechain sidechain matrix 
+(5) import the functions necessary for constructing the """
 import sc_imports
 import forge_database
 
-write_numpy_array()
+# run the first two phases of the pipeline below  
+obtain_monomer_coordinates()
