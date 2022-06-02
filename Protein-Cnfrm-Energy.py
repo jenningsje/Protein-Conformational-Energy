@@ -41,6 +41,13 @@ for path in get_file_paths_from_args():
     (5) the z coordinate of the atom: 'atom_site.Cartn_z' """
     table = cif_block.find(['_atom_site.type_symbol', '_atom_site.label_comp_id', '_atom_site.Cartn_x', '_atom_site.Cartn_y', '_atom_site.Cartn_z'])
 
-    for row in table:
-        print(table.find_column('_atom_site.type_symbol'), str(os.path.basename(path)))
-        
+    # write coordinates within each cif block into a database
+    # there is a new column added to this database that contains the name of the protein
+    n = 0
+    with open('protein_coordinate_database.csv', 'w', newline='') as csvfile:
+        for row in table:
+            #row, os.path.basename(path))
+            writer = csv.writer(csvfile)
+            writer.writerow(row)
+            print(n)
+            n = n +1        
