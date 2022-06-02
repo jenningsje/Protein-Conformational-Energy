@@ -53,4 +53,3 @@ with open('protein_coordinate_database.csv', 'w') as csvfile:
 
 read(os.path.join('.',
         'protein_database.csv'))
-
