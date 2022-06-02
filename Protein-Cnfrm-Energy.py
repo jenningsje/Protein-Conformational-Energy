@@ -27,9 +27,9 @@ def get_file_paths_from_args():
         else:
             yield expand_if_pdb_code(arg)
 
+
 with open('protein_coordinate_database.csv', 'w') as csvfile:
     writer = csv.writer(csvfile)
-    n = 0
     for path in get_file_paths_from_args():
         # read the crystallographic information file (uncompressing it on the fly)
         gemmi.read_structure(path, format=gemmi.CoorFormat.Detect)
@@ -48,9 +48,5 @@ with open('protein_coordinate_database.csv', 'w') as csvfile:
         # there is a new column added to this database that contains the name of the protein
         for row in table:
             writer.writerow(str(row) + str(os.path.basename(path)))
-            print(n)
-            n = n +1
 
-read(os.path.join('.',
-        'protein_database.csv'))
-
+path_to_csv = os.path.join('.','protein_database.csv')
