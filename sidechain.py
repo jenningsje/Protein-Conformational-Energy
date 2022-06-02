@@ -22,9 +22,9 @@ aa_list.close()
 # print items for the Mij matrix below
 # print out the list of amino acids
 print(" ")
-print("amino acids")
-amino_acids = schain_table_rows[0].split()
-print(amino_acids)
+print("amino acid list")
+amino_acid_list = schain_table_rows[0].split()
+print(amino_acid_list)
 
 # print items for the Hij matrix Below
 # print out the list of amino acids
@@ -85,14 +85,7 @@ for sc_table_row in sc_table_rows[1:]:
     aa_table.append(numbers)
 
 for item in hbond_prob_param:
-    hbond_type_index.append(amino_acids.index(item))
-
-# construct the Mij matrtix
-for i in range(m):
-    Mij.append([])
-    for j in range(m):
-        prob = aa_table[hb_prob_index[i]][hb_prob_index[j]]
-        Mij[i].append(prob)
+    hbond_type_index.append(amino_acid_list.index(item))
 
 # construct the matrix for the types of hydrogen bonds
 for line in lines[1:]:
@@ -118,10 +111,3 @@ for i in range(n):
         else:
             prob2 = 0.0
             Eij[i].append(prob2)
-
-# tensor product of acid_table0 and Eij
-for i in range(n):
-    Aij.append([])
-    for j in range(n):
-            prob = aa_table[i][j]*Eij[i][j]
-            Aij[i].append(prob)
