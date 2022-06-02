@@ -7,7 +7,7 @@ def get_file_paths_from_args():
         else:
             yield expand_if_pdb_code(arg)
 
-write_numpy_array():
+def write_numpy_array():
 
     with open('protein_coordinate_database.csv', 'w') as csvfile:
     writer = csv.writer(csvfile)
@@ -34,3 +34,4 @@ write_numpy_array():
                 n = n +1
                 
     my_array = genfromtxt('protein_coordinate_database.csv', delimiter=',')
+
