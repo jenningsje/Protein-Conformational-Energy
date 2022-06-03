@@ -5,11 +5,8 @@ from __future__ import print_function
 import sys
 import os
 from collections import Counter
-import gemmi
 from gemmi import cif, CifWalk, expand_if_pdb_code
 import numpy as np
-import csv
-from csv import DictWriter
 from numpy import genfromtxt
 
 """ import the following files containing:
@@ -19,7 +16,7 @@ from numpy import genfromtxt
 (4) import the variables for the sidechain sidechain matrix 
 (5) import the functions necessary for constructing the """
 import sc_imports
-import forge_database
+from obtain_monomer_coordinates import write_numpy_array
 
-# run the first two phases of the pipeline below  
-obtain_monomer_coordinates()
+# get the names of each protein as well as the monomer coordinates for them
+write_numpy_array()

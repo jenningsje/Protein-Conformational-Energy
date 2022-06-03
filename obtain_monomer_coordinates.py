@@ -1,3 +1,13 @@
+import os
+import csv
+from csv import DictWriter
+import sys
+import gemmi
+from gemmi import cif, CifWalk, expand_if_pdb_code
+import numpy as np
+from numpy import genfromtxt
+
+#!/usr/bin/env python
 # this function returns the path from a directory specified by the user otherwise it will return the pdb code
 def get_file_paths_from_args():
     for arg in sys.argv[1:]:
@@ -17,8 +27,8 @@ def get_file_paths_from_args():
 def write_numpy_array():
 
     with open('protein_coordinate_database.csv', 'w') as csvfile:
-    writer = csv.writer(csvfile)
-    n = 0
+        writer = csv.writer(csvfile)
+        n = 0
         for path in get_file_paths_from_args():
             # read the crystallographic information file (uncompressing it on the fly)
             gemmi.read_structure(path, format=gemmi.CoorFormat.Detect)
@@ -38,14 +48,14 @@ def write_numpy_array():
                 writer.writerow(str(row) + str(os.path.basename(path)))
                 print(n)
                 n = n +1
-                
-    numpy_array = genfromtxt('protein_coordinate_database.csv', delimiter=',')
+    # there is a segfault below
+    numpy_array = np.genfromtxt(open('protein_coordinate_database.csv','r'), delimiter='',invalid_raise = False)
 
-"""this is the second phase of the pipeline:
+""" this is the second phase of the pipeline:
 (1) mine the meta-data for atomic coordinates
 (2) obtain the positions for every monomer within each protein
 (3) add three new columns for the x, y, z coordinates of each monomer for every protein
-(4) store the x, y, z positions for each monomer within the x, y, z columns respectively"""
+(4) store the x, y, z positions for each monomer within the x, y, z columns respectively """
 def AddColWithAAPositions(NParray):
     for col in range(3):
         AAPosition = 0
@@ -57,8 +67,3 @@ def AddColWithAAPositions(NParray):
         for row in NParray:
             while NParray[row][5] == NParray[row + 1][5]:
                 NParray[row][col + 5] == AAPosition/m
-
-
-def obtain_monomer_coordinates():
-    write_numpy_array()
-    AddColWithAAPositions(numpy_array)
