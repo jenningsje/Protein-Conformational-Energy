@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 import os
 import csv
 from csv import DictWriter
@@ -6,25 +7,22 @@ import gemmi
 from gemmi import cif, CifWalk, expand_if_pdb_code
 import numpy as np
 from numpy import genfromtxt
+import file_path
+from file_path import get_file_paths_from_args
+import subprocess
 
-#!/usr/bin/env python
-# this function returns the path from a directory specified by the user otherwise it will return the pdb code
-def get_file_paths_from_args():
-    for arg in sys.argv[1:]:
-        if os.path.isdir(arg):
-            for path in CifWalk(arg):
-                yield path
-        else:
-            yield expand_if_pdb_code(arg)
+import acid_atom_to_num
 
-# below is the first phase of the pipeline
+aa_dict = {1: "ALA", 2: "ARG", 3: "ASN", 4: "ASP", 5: "CYS", 6: "GLU", 7: "GLN", 8: "GLY", 9: "HIS", 10: "LIE", 11: "LEU", 12: "LYS", 13: "MET", 14: "PHE", 15: "PRO", 16: "SER", 17: "THR", 18: "TRP", 19: "TYR", 20: "VAL"}
+
+atoms = {"C": 1, "N": 2, "O": 3, "ZN": 4}
 
 """ first phase of the pipeline:
 (1) extracts data from crystallographic information database
 (2) feeds data into a csv file and create a new column containing
     the names of the cif files containing the data in the other columns
 (3) stores the data in this csv file in a numpy array """
-def write_numpy_array():
+def names_and_coord():
 
     with open('protein_coordinate_database.csv', 'w') as csvfile:
         writer = csv.writer(csvfile)
@@ -45,11 +43,9 @@ def write_numpy_array():
 
             # write (1), (2), (3), (4), (5) into a csv file with a new column containing the name of the cif file
             for row in table:
-                writer.writerow(str(row) + str(os.path.basename(path)))
-                print(n)
-                n = n +1
-    # there is a segfault below
-    numpy_array = np.genfromtxt(open('protein_coordinate_database.csv','r'), delimiter='',invalid_raise = False)
+                writer.writerow(row)
+
+    my_array = genfromtxt('protein_coordinate_database.csv', delimiter=',')
 
 """ this is the second phase of the pipeline:
 (1) mine the meta-data for atomic coordinates
