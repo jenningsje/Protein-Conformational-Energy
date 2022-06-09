@@ -19,15 +19,13 @@ aa_dict = {"ALA": 1, "ARG": 2, "ASN": 3, "ASP": 4, "CYS": 5, "GLU": 6, "GLN": 7,
 atom_dict = {"C": 1, "N": 2, "O": 3, "ZN": 4}
 
 """ first phase of the pipeline:
-(1) extracts data from crystallographic information database
+(1) extracts coordinaters from crystallographic information database
 (2) feeds data into a csv file and create a new column containing
-    the names of the cif files containing the data in the other columns
 (3) stores the data in this csv file in a numpy array """
-def names_and_coord():
+def coordinates():
 
-    with open('protein_coordinate_database.csv', 'w') as csvfile:
+    with open('protein_coordinates.csv', 'w') as csvfile:
         writer = csv.writer(csvfile)
-        n = 0
         for path in get_file_paths_from_args():
             # read the crystallographic information file (uncompressing it on the fly)
             gemmi.read_structure(path, format=gemmi.CoorFormat.Detect)
@@ -46,7 +44,29 @@ def names_and_coord():
             for row in table:
                 writer.writerow(row)
 
-    my_array = genfromtxt('protein_coordinate_database.csv', delimiter=',')
+    my_array = genfromtxt('protein_coordinates.csv', delimiter=',')
+
+def names():
+    # count the number of rows in the protein_coordinates csv file
+    with open('protein_coordinates.csv', 'r') as coordinates_csv:
+        for path in get_file_paths_from_args():
+            reader = csv.reader(coordinates_csv)
+            row_count = sum(1 for row in reader)
+
+    with open('protein_names.csv', 'w') as names_csv:
+        writer = csv.writer(names_csv)
+        for path in get_file_paths_from_args():
+        # read the crystallographic information file (uncompressing it on the fly)
+            gemmi.read_structure(path, format=gemmi.CoorFormat.Detect)
+            cif_file = cif.read(path)
+            cif_block = cif_file.sole_block()
+
+        """ obtain the following from each file:
+        (1) the entry id """
+        for i in range(row_count):
+            writer.writerow(cif_block.name)
+
+    my_array = genfromtxt('protein_names.csv', delimiter=',')
 
 """ this is the second phase of the pipeline:
 (1) mine the meta-data for atomic coordinates
