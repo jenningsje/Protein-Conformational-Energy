@@ -7,15 +7,16 @@ import gemmi
 from gemmi import cif, CifWalk, expand_if_pdb_code
 import numpy as np
 from numpy import genfromtxt
-import file_path
-from file_path import get_file_paths_from_args
 import subprocess
 
 import acid_atom_to_num
+import forge_database
+from forge_database import get_file_paths_from_args
+from forge_database import write_numpy_array
 
-aa_dict = {1: "ALA", 2: "ARG", 3: "ASN", 4: "ASP", 5: "CYS", 6: "GLU", 7: "GLN", 8: "GLY", 9: "HIS", 10: "LIE", 11: "LEU", 12: "LYS", 13: "MET", 14: "PHE", 15: "PRO", 16: "SER", 17: "THR", 18: "TRP", 19: "TYR", 20: "VAL"}
+aa_dict = {"ALA": 1, "ARG": 2, "ASN": 3, "ASP": 4, "CYS": 5, "GLU": 6, "GLN": 7, "GLY": 8, "HIS": 9, "LIE": 10, "LEU": 11, "LYS": 12, "MET": 13, "PHE": 14, "PRO": 15, "SER": 16, "THR": 17, "TRP": 18, "TYR": 19, "VAL": 20}
 
-atoms = {"C": 1, "N": 2, "O": 3, "ZN": 4}
+atom_dict = {"C": 1, "N": 2, "O": 3, "ZN": 4}
 
 """ first phase of the pipeline:
 (1) extracts data from crystallographic information database

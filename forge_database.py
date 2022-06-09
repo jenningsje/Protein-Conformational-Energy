@@ -1,3 +1,14 @@
+#!/usr/bin/env python
+import os
+import csv
+from csv import DictWriter
+import sys
+import gemmi
+from gemmi import cif, CifWalk, expand_if_pdb_code
+import numpy as np
+from numpy import genfromtxt
+import subprocess
+
 # this function returns the path from a directory specified by the user otherwise it will return the pdb code
 def get_file_paths_from_args():
     for arg in sys.argv[1:]:
