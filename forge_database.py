@@ -49,7 +49,8 @@ def write_numpy_array():
                 writer.writerow(str(row) + str(os.path.basename(path)))
                 print(n)
                 n = n +1
-    numpy_array = genfromtxt('protein_coordinate_database.csv', delimiter=',')
+
+    numpy_array = genfromtxt('protein_coordinate_database.csv', delimiter=',', usecols=np.arange(3))
 
 """ this is the second phase of the pipeline:
 (1) mine the meta-data for atomic coordinates
