@@ -61,6 +61,8 @@ def coordinates():
                 for j in range(6):
                     if j != 6:
                         np.append(prot_arr, arr[j])
+                    else:
+                        np.append(prot_arr, file_array[i], axis=6)
 
 
 # second component of pipeline, feed crystallographic into this pipeline
