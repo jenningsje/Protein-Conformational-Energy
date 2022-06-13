@@ -41,18 +41,19 @@ def coordinates():
             for row in table:
                 writer.writerow(row)
 
-            arr = genfromtxt('protein_coordinates.csv', delimiter=',')
+            arr = genfromtxt('protein_coordinates.csv', delimiter=',', dtype=object)
 
             m = 0
             for row in table:
                 m = m + 1
 
-            prot_arr = []
+            prot_arr = np.array([], dtype=object)
+            
+            file_name = os.path.basename(
+                                path).removesuffix('.cif.gz')
 
             for i in range(m):
-                for j in range(6):
-                    if j != 6:
-                        np.append(prot_arr, [arr[1], arr[2], arr[3], arr[4], arr[5]])
+                np.append(prot_arr, arr)
 
 
 # second component of pipeline, feed crystallographic into this pipeline
