@@ -41,10 +41,13 @@ def coordinates():
             for row in table:
                 writer.writerow(row)
 
-    coor_array = genfromtxt('protein_coordinates.csv', delimiter=',')
+            m = 0
+            for row in table:
+                m = m + 1
 
-    for row in coor_array:
-        print(row)
+            prot_arr = (m, 6)
+
+
 
 # second component of pipeline, feed crystallographic into this pipeline
 # and obtain the names 
