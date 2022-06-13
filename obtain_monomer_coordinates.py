@@ -57,10 +57,11 @@ def coordinates():
             for i in range(m):
                 np.append(file_array, file_name)
 
-
             prot_arr = np.append(prot_arr, arr)
 
-    print(prot_arr)
+            for row in range(6):
+                print(row + 1)
+                print(prot_arr[row + 1])
 
 # second component of pipeline, feed crystallographic into this pipeline
 # and obtain the names 
