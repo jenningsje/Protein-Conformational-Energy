@@ -9,7 +9,8 @@ import numpy as np
 from numpy import genfromtxt
 import subprocess
 
-# this function returns the path from a directory specified by the user otherwise it will return the pdb code
+# mine directory for crystallographic information data
+# this will break if there is one file that is not a cif file in the directory
 def get_file_paths_from_args():
     for arg in sys.argv[1:]:
         if os.path.isdir(arg):
@@ -18,16 +19,9 @@ def get_file_paths_from_args():
         else:
             yield expand_if_pdb_code(arg)
 
-# below is the first phase of the pipeline
+def write_numpy_array(data):
 
-""" first phase of the pipeline:
-(1) extracts data from crystallographic information database
-(2) feeds data into a csv file and create a new column containing
-    the names of the cif files containing the data in the other columns
-(3) stores the data in this csv file in a numpy array """
-def write_numpy_array():
-
-    with open('protein_coordinate_database.csv', 'w') as csvfile:
+    with open(data, 'w') as csvfile:
         writer = csv.writer(csvfile)
         n = 0
         for path in get_file_paths_from_args():
@@ -52,11 +46,6 @@ def write_numpy_array():
 
     numpy_array = genfromtxt('protein_coordinate_database.csv', delimiter=',', usecols=np.arange(3))
 
-""" this is the second phase of the pipeline:
-(1) mine the meta-data for atomic coordinates
-(2) obtain the positions for every monomer within each protein
-(3) add three new columns for the x, y, z coordinates of each monomer for every protein
-(4) store the x, y, z positions for each monomer within the x, y, z columns respectively """
 def AddColWithAAPositions(NParray):
     for col in range(3):
         AAPosition = 0
