@@ -18,7 +18,7 @@ aa_dict = {"ALA": 1, "ARG": 2, "ASN": 3, "ASP": 4, "CYS": 5, "GLU": 6, "GLN": 7,
 
 atom_dict = {"C": 1, "N": 2, "O": 3, "ZN": 4}
 
-# first component of pipeline, mine directory for crystallgraphic meta-data
+# preprocess the data in the pipeline
 
 def coordinates():
 
@@ -57,13 +57,10 @@ def coordinates():
             for i in range(m):
                 np.append(file_array, file_name)
 
-            for i in range(m):
-                for j in range(6):
-                    if j != 6:
-                        np.append(prot_arr, arr[j])
-                    else:
-                        np.append(prot_arr, file_array[i], axis=6)
 
+            prot_arr = np.append(prot_arr, arr)
+
+    print(prot_arr)
 
 # second component of pipeline, feed crystallographic into this pipeline
 # and obtain the names 
