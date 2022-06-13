@@ -43,11 +43,16 @@ def coordinates():
 
             m = 0
             for row in table:
-                m = m + 1
+                m = m + 1            
 
-            prot_arr = (m, 6)
-            file_arr = (m)
+            prot_arr = (m,6)
 
+            for i in range(m):
+                for j in range(6):
+                    if j == 6:
+                        prot_arr[i][j] = os.path.basename(path).removesuffix('.cif.gz')
+                    else:
+                        prot_arr[i][j] = table[i][j]
 
 
 # second component of pipeline, feed crystallographic into this pipeline
