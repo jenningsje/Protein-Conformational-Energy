@@ -49,11 +49,18 @@ def coordinates():
 
             prot_arr = np.array([], dtype=object)
             
+            file_array = []
+
             file_name = os.path.basename(
                                 path).removesuffix('.cif.gz')
 
             for i in range(m):
-                np.append(prot_arr, arr)
+                np.append(file_array, file_name)
+
+            for i in range(m):
+                for j in range(6):
+                    if j != 6:
+                        np.append(prot_arr, arr[j])
 
 
 # second component of pipeline, feed crystallographic into this pipeline
