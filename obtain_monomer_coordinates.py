@@ -46,6 +46,7 @@ def coordinates():
                 m = m + 1
 
             prot_arr = (m, 6)
+            file_arr = (m)
 
 
 
