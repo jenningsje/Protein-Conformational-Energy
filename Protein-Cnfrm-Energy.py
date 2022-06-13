@@ -12,8 +12,6 @@ from numpy import genfromtxt
 
 import sc_imports
 from obtain_monomer_coordinates import coordinates
-from obtain_monomer_coordinates import names
 
 # get the names of each protein as well as the monomer coordinates for them
 coordinates()
-names()
