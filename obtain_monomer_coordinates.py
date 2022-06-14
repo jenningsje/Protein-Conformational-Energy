@@ -60,8 +60,11 @@ def coordinates():
             prot_arr = np.append(prot_arr, arr)
 
             for row in range(6):
-                print(row + 1)
                 print(prot_arr[row + 1])
+                if row + 1 == 6:
+                    prot_arr = np.append(prot_arr, file_array)
+                else:
+                    prot_arr = np.append(prot_arr, arr)
 
 # second component of pipeline, feed crystallographic into this pipeline
 # and obtain the names 
