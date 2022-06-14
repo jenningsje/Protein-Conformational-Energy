@@ -18,7 +18,7 @@ aa_dict = {"ALA": 1, "ARG": 2, "ASN": 3, "ASP": 4, "CYS": 5, "GLU": 6, "GLN": 7,
 
 atom_dict = {"C": 1, "N": 2, "O": 3, "ZN": 4}
 
-# first component of pipeline, mine directory for crystallgraphic meta-data
+# preprocess the data in the pipeline
 
 def coordinates():
 
@@ -41,14 +41,30 @@ def coordinates():
             for row in table:
                 writer.writerow(row)
 
+            arr = genfromtxt('protein_coordinates.csv', delimiter=',', dtype=object)
+
             m = 0
             for row in table:
                 m = m + 1
 
-            prot_arr = (m, 6)
-            file_arr = (m)
+            prot_arr = np.array([], dtype=object)
+            
+            file_array = []
 
+            file_name = os.path.basename(
+                                path).removesuffix('.cif.gz')
 
+            for i in range(m):
+                np.append(file_array, file_name)
+
+            prot_arr = np.append(prot_arr, arr)
+
+            for row in range(6):
+                print(prot_arr[row + 1])
+                if row + 1 == 6:
+                    prot_arr = np.append(prot_arr, file_array)
+                else:
+                    prot_arr = np.append(prot_arr, arr)
 
 # second component of pipeline, feed crystallographic into this pipeline
 # and obtain the names 
