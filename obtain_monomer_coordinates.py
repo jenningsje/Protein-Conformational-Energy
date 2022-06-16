@@ -22,7 +22,7 @@ atom_dict = {"C": 1, "N": 2, "O": 3, "ZN": 4}
 
 # preprocess the data in the pipeline
 
-def coordinates():
+def preprocess():
 
     # open a new csv file protein_coordinates.csv
     with open('protein_coordinates.csv','w') as csvfile:
@@ -61,10 +61,10 @@ def coordinates():
             
             print(prot_arr)
 
-# second component of pipeline, feed crystallographic into this pipeline
+# first component of pipeline, feed crystallographic into this pipeline
 # and obtain the names 
 
-def AddColWithAAPositions(NParray):
+def amino_positions(NParray):
     for col in range(3):
         AAPosition = 0
         for row in NParray:
