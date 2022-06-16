@@ -1,3 +1,4 @@
+
 #!/usr/bin/env python
 import os
 import csv
@@ -45,18 +46,20 @@ def coordinates():
             arr = genfromtxt('protein_coordinates.csv', delimiter=',', dtype=object)
 
             # the indices for the hieght of the database (contains all atomic coordinates from all files)
+            prot_arr = np.array([], dtype=object)
+            file_arr = np.array([], dtype=object)
+            file_name = os.path.basename(
+                                path).removesuffix('.cif.gz')
+
             m = 0
             for row in table:
                 m = m + 1
 
-            prot_arr = np.array([], dtype=object)
-            file_array = []
-            file_name = os.path.basename(
-                                path).removesuffix('.cif.gz')
-
-            file_array = np.append(file_array, file_name)
-
-            arr = np.arange(m*5).reshape((m,5))
+            file_arr = np.append(file_arr, file_name)
+            prot_arr = np.append(prot_arr, file_arr)
+            prot_arr = np.append(prot_arr, arr)
+            
+            print(prot_arr)
 
 # second component of pipeline, feed crystallographic into this pipeline
 # and obtain the names 
