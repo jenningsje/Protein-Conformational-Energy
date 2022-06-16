@@ -43,35 +43,5 @@ def preprocess():
             for row in table:
                 writer.writerow(row)
 
+            # construct the block for the coordinate data below
             arr = genfromtxt('protein_coordinates.csv', delimiter=',', dtype=object)
-
-            # the indices for the hieght of the database (contains all atomic coordinates from all files)
-            prot_arr = np.array([], dtype=object)
-            file_arr = np.array([], dtype=object)
-            file_name = os.path.basename(
-                                path).removesuffix('.cif.gz')
-
-            m = 0
-            for row in table:
-                m = m + 1
-
-            file_arr = np.append(file_arr, file_name)
-            prot_arr = np.append(prot_arr, file_arr)
-            prot_arr = np.append(prot_arr, arr)
-            
-            print(prot_arr)
-
-# first component of pipeline, feed crystallographic into this pipeline
-# and obtain the names 
-
-def amino_positions(NParray):
-    for col in range(3):
-        AAPosition = 0
-        for row in NParray:
-            m = 0
-            while NParray[row][5] == NParray[row + 1][5]:
-                m = m + 1
-                AAPosition = NParray[row][col] + NParray[row + 1][col]
-        for row in NParray:
-            while NParray[row][5] == NParray[row + 1][5]:
-                NParray[row][col + 5] == AAPosition/m
