@@ -50,5 +50,9 @@ def pipeline():
 
             for i in range(1,len(arr)):
                 j = 3
+                m = 0
+                pos_sum = 0
                 while j in range(3,5) and float(arr[i][j]) == float(arr[i][j + 1]):
-                    print(float(arr[i][j]))
+                    m = m + 1
+                    pos_sum = arr[i][j] + arr[i + 1][j]
+                    
