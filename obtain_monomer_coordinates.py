@@ -57,11 +57,24 @@ def pipeline():
             # construct the block for the coordinate data below
             arr = genfromtxt('protein_coordinates.csv', delimiter=',', dtype=object)
 
-            for i in range(1,len(arr)):
-                j = 3
-                while j in range(3,5) and float(arr[i][j]) == float(arr[i][j + 1]):
-                    coordinates(arr[i][j], i , j)
-                    x_avg = x_sum/m
-                    y_avg = y_sum/m 
-                    z_avg = z_sum/m
-                    print(x_avg)
+            print (arr.shape)
+            print (arr)
+            print (arr[0,0])
+
+            print (type(arr[0,0]))
+                    
+            test = arr[:,0]
+            print (test)
+
+            mask = (arr[:,1] == b'VAL')
+            test = arr[mask,:]
+            print (test.shape)
+            print (test)
+
+            test2 = test[:,2]
+            print (test2)
+
+            test3 = test2.astype(float)
+            print (test3)
+
+            print (test3.mean())
