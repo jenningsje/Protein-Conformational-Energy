@@ -49,5 +49,6 @@ def pipeline():
             prot_arr = []
 
             for i in range(1,len(arr)):
-                for j in range(3,5):
+                j = 3
+                while j in range(3,5) and float(arr[i][j]) == float(arr[i][j + 1]):
                     print(float(arr[i][j]))
