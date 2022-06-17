@@ -47,12 +47,5 @@ def pipeline():
             arr = genfromtxt('protein_coordinates.csv', delimiter=',', dtype=object)
 
             for i in range(1,len(arr)):
-                AAPosition = 0
-                for j in range(1, 5):
-                    m = 0
-                    while arr[i][j] == arr[i + 1][j]:
-                        m = m + 1
-                        AAPosition = arr[i][j] + arr[i + 1][j]
-            for i in range(1,len(arr)):
-                while arr[i][5] == arr[i + 1][5]:
-                    arr[i][j + 5] == AAPosition/m
+                for j in range(3,5):
+                    print('success')
