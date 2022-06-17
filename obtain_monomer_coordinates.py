@@ -20,8 +20,19 @@ aa_dict = {"b'ALA'": 1, "b'ARG'": 2, "b'ASN'": 3, "b'ASP'": 4, "b'CYS'": 5, "b'G
 
 atom_dict = {"C": 1, "N": 2, "O": 3, "ZN": 4}
 
-# preprocess the data in the pipeline
+# returns the average value of matrix elements
 
+def coordinates(M, i , j):
+    m, x_sum, y_sum, z_sum = 0
+    while float(M[1][j]) == float(M[1][j + 1]):
+        m = m + 1
+        x_sum = M[i][3] + M[i + 1][3]
+        y_sum = M[i][4] + M[i + 1][4]
+        z_sum = M[i][5] + M[i + 1][5]
+        return m, x_sum, y_sum, z_sum
+
+
+# bioinformatics pipeline
 def pipeline():
 
     # open a new csv file protein_coordinates.csv
@@ -45,10 +56,25 @@ def pipeline():
 
             # construct the block for the coordinate data below
             arr = genfromtxt('protein_coordinates.csv', delimiter=',', dtype=object)
-            print(arr)
-            prot_arr = []
 
-            for i in range(1,len(arr)):
-                j = 3
-                while j in range(3,5) and float(arr[i][j]) == float(arr[i][j + 1]):
-                    print(float(arr[i][j]))
+            print (arr.shape)
+            print (arr)
+            print (arr[0,0])
+
+            print (type(arr[0,0]))
+                    
+            test = arr[:,0]
+            print (test)
+
+            mask = (arr[:,1] == b'VAL')
+            test = arr[mask,:]
+            print (test.shape)
+            print (test)
+
+            test2 = test[:,2]
+            print (test2)
+
+            test3 = test2.astype(float)
+            print (test3)
+
+            print (test3.mean())
