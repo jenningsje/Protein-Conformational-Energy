@@ -22,7 +22,7 @@ atom_dict = {"C": 1, "N": 2, "O": 3, "ZN": 4}
 
 # preprocess the data in the pipeline
 
-def coordinates():
+def pipeline():
 
     # open a new csv file protein_coordinates.csv
     with open('protein_coordinates.csv','w') as csvfile:
@@ -43,35 +43,16 @@ def coordinates():
             for row in table:
                 writer.writerow(row)
 
+            # construct the block for the coordinate data below
             arr = genfromtxt('protein_coordinates.csv', delimiter=',', dtype=object)
 
-            # the indices for the hieght of the database (contains all atomic coordinates from all files)
-            prot_arr = np.array([], dtype=object)
-            file_arr = np.array([], dtype=object)
-            file_name = os.path.basename(
-                                path).removesuffix('.cif.gz')
-
-            m = 0
-            for row in table:
-                m = m + 1
-
-            file_arr = np.append(file_arr, file_name)
-            prot_arr = np.append(prot_arr, file_arr)
-            prot_arr = np.append(prot_arr, arr)
-            
-            print(prot_arr)
-
-# second component of pipeline, feed crystallographic into this pipeline
-# and obtain the names 
-
-def AddColWithAAPositions(NParray):
-    for col in range(3):
-        AAPosition = 0
-        for row in NParray:
-            m = 0
-            while NParray[row][5] == NParray[row + 1][5]:
-                m = m + 1
-                AAPosition = NParray[row][col] + NParray[row + 1][col]
-        for row in NParray:
-            while NParray[row][5] == NParray[row + 1][5]:
-                NParray[row][col + 5] == AAPosition/m
+            for i in range(1,len(arr)):
+                AAPosition = 0
+                for j in range(1, 5):
+                    m = 0
+                    while arr[i][j] == arr[i + 1][j]:
+                        m = m + 1
+                        AAPosition = arr[i][j] + arr[i + 1][j]
+            for i in range(1,len(arr)):
+                while arr[i][5] == arr[i + 1][5]:
+                    arr[i][j + 5] == AAPosition/m
