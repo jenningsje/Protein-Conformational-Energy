@@ -16,9 +16,9 @@ import forge_database
 from forge_database import get_file_paths_from_args
 from forge_database import write_numpy_array
 
-aa_dict = {"b'ALA'": 1, "b'ARG'": 2, "b'ASN'": 3, "b'ASP'": 4, "b'CYS'": 5, "b'GLU'": 6, "b'GLN'": 7, "b'GLY'": 8, "b'HIS'": 9, "b'LIE'": 10, "b'LEU'": 11, "b'LYS'": 12, "b'MET'": 13, "b'PHE'": 14, "bPRO": 15, "bSER": 16, "bTHR": 17, "bTRP": 18, "bTYR": 19, "b'VAL'": 20}
+aa_dict = {b'ALA', b'ARG', b'ASN', b'ASP', b'CYS', b'GLU', b'GLN', b'GLY', b'HIS', b'LIE', b'LEU', b'LYS', b'MET', b'PHE', b'PRO', b'SER', b'THR', b'TRP', b'TYR', b'VAL'}
 
-atom_dict = {"C": 1, "N": 2, "O": 3, "ZN": 4}
+atom_dict = {b'C': 1, b'N': 2, b'O': 3, b'ZN': 4}
 
 # returns the average value of matrix elements
 
@@ -66,15 +66,16 @@ def pipeline():
             test = arr[:,0]
             print (test)
 
-            mask = (arr[:,1] == b'VAL')
-            test = arr[mask,:]
-            print (test.shape)
-            print (test)
+            for elem in aa_dict:
+                mask = (arr[:,1] == elem)
+                test = arr[mask,:]
+                print (test.shape)
+                print (test)
 
-            test2 = test[:,2]
-            print (test2)
+                test2 = test[:,2]
+                print (test2)
 
-            test3 = test2.astype(float)
-            print (test3)
+                test3 = test2.astype(float)
+                print (test3)
 
-            print (test3.mean())
+                print (test3.mean())
