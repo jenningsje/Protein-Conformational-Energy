@@ -36,42 +36,21 @@ seq_file.close()
 
 # create dictionaries
 
-aa_dict = {b'ALA': 1, b'ARG': 2, b'ASN': 3, b'ASP': 4, b'CYS': 5, b'GLU': 6, b'GLN': 7, b'GLY': 8, b'HIS': 9, b'LIE': 10, b'LEU': 11, b'LYS': 12, b'MET': 13, b'PHE': 14, b'PRO': 15, b'SER': 16, b'THR': 17, b'TRP': 18, b'TYR': 19, b'VAL': 20}
+aa_dict = {b'ALA': 1, b'ARG': 2, b'ASN': 3, b'ASP': 4, b'CYS': 5, b'GLU': 6, b'GLN': 7, b'GLY': 8, b'HIS': 9, b'LIE': 10, b'LEU': 11, b'LYS': 12, b'MET': 13, b'PHE': 14, b'PRO': 15, b'SER': 16, b'THR': 17, b'TRP': 18, b'TYR': 19, b'VAL': 20, b'None': 21}
 
-atom_dict = {b'C': 1, b'N': 2, b'O': 3, b'ZN': 4}
+atom_dict = {b'C': 1, b'N': 2, b'O': 3, b'ZN': 4, b'None': 5}
 
-# matrices corresponding to the Mij matrix below
-# hydrogen bond probability matrix
-acid_table0 = []
+atom_filter = {b'C' , b'N' , b'O' , b'ZN'}
 
-# Mij matrix below
-Mij = []
+aa_filter = {b'ALA', b'ARG', b'ASN', b'ASP', b'CYS', b'GLU', b'GLN', b'GLY', b'HIS', b'LIE', b'LEU', b'LYS', b'MET', b'PHE', b'PRO', b'SER', b'THR', b'TRP', b'TYR', b'VAL'}
 
-# matrices corresponding to the Hij matrix below
-# matrix for the types of hydrogen bonds
-hamiltonian_table = []
-
-# matrix for the energy levels
-Eij = []
-
-# hamiltonian matrix
-Hij = []
-
-# tensor product for acid_table0 and Eij
 Aij = []
 
-# matrix for the Kronecker delta
-Rij = []
+Eij = []
 
-# tensor product for Mij and Kij
-Dij = []
+aa_table = []
 
-# Energy corresponding to the sidechains
-Hsc = []
-
-Es = []
-
-S = 0
+h_table = []
 
 # split the sidechain probability table
 acids0 = lines0[0].split()
@@ -87,19 +66,19 @@ seq_index = []
 for line0 in lines0[1:]:
     row0 = line0.split()[1:]
     numbers0 = list(map(float,row0))
-    acid_table0.append(numbers0)
+    aa_table.append(numbers0)
 
 # construct the matrix for the types of hydrogen bonds
 for line in lines[1:]:
     row = line.split()[1:]
     letters = list(map(str,row))
-    hamiltonian_table.append(letters)
+    h_table.append(letters)
 
 # construct the matrix for the energy levels
 for i in range(n):
     Eij.append([])
     for j in range(n):
-        prob = hamiltonian_table[i][j]
+        prob = h_table[i][j]
         if prob == "N":
             prob2 = -1.64013e-22
             Eij[i].append(prob2)
@@ -118,18 +97,18 @@ for i in range(n):
 for i in range(n):
     Aij.append([])
     for j in range(n):
-            prob = acid_table0[i][j]*Eij[i][j]
+            prob = aa_table[i][j]*Eij[i][j]
             Aij[i].append(prob)
 
 # tensor product of acid_table0 and Eij
 for i in range(n):
     Aij.append([])
     for j in range(n):
-            prob = acid_table0[i][j]*Eij[i][j]
+            prob = aa_table[i][j]*Eij[i][j]
             Aij[i].append(prob)
 
 # bioinformatics pipeline
-def clean_cifs():
+def pipeline():
     count = 0
     # open a new csv file protein_coordinates.csv
     with open('protein_coordinates.csv','w') as csvfile:
@@ -141,6 +120,8 @@ def clean_cifs():
             gemmi.read_structure(path, format=gemmi.CoorFormat.Detect)
             cif_file = cif.read(path)
             cif_block = cif_file.sole_block()
+
+            # first phase of the bioinformatics pipeline:
 
             # obtain the following x, y, z coordinates, aa names and atoms for the protein given in path
             table = cif_block.find(['_atom_site.type_symbol', '_atom_site.label_comp_id',
@@ -156,4 +137,34 @@ def clean_cifs():
             print(count)
             count = count + 1
 
-            cif_block.find_loop_item('entity_poly_seq.mon_id')
+            # second phase of the bioinformatics pipeline
+            file_name = os.path.basename(path)
+
+            # Mij matrix below
+            Mij = []
+
+            # hamiltonian matrix
+            Hij = []
+
+            # matrix for the Kronecker delta
+            Rij = []
+
+            # tensor product for Mij and Kij
+            Dij = []
+
+            # Energy corresponding to the sidechains
+            seq_indices = []
+
+            # indicate where the corrupt data is located
+            for amino in aa_filter:
+                arr = np.where(arr != amino, b'None', arr)
+            for atom in atom_filter:
+                arr = np.where(arr != atom, b'None', arr)
+
+            # replace the amino acids and the atoms with indices
+            for amino in arr[:,0]:
+                seq_indices.append(arr[aa_dict[amino]])
+            for atom in arr[:,1]:
+                seq_indices.append(arr[atom_dict[atom]])
+
+            # 
