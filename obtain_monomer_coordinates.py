@@ -1,4 +1,3 @@
-
 #!/usr/bin/env python
 import os
 import csv
@@ -14,27 +13,124 @@ import scanpy
 import acid_atom_to_num
 import forge_database
 from forge_database import get_file_paths_from_args
-from forge_database import write_numpy_array
+from forge_database import write_numpy_arr
 
-aa_dict = {b'ALA', b'ARG', b'ASN', b'ASP', b'CYS', b'GLU', b'GLN', b'GLY', b'HIS', b'LIE', b'LEU', b'LYS', b'MET', b'PHE', b'PRO', b'SER', b'THR', b'TRP', b'TYR', b'VAL'}
+# import text files
+
+# import items for the Mij matrix Below
+# import the acid table
+table_file0 = open("schain_prob_table.txt")
+lines0 = table_file0.readlines()
+table_file0.close()
+
+# import items for the Hij matrix Below
+# import the hamiltonian chart
+table_file = open("hbond_type_table.txt")
+lines = table_file.readlines()
+table_file.close()
+
+# import the amino acid list
+seq_file = open("list.txt")
+seq_string = seq_file.read()
+seq_file.close()
+
+# create dictionaries
+
+aa_dict = {b'ALA': 1, b'ARG': 2, b'ASN': 3, b'ASP': 4, b'CYS': 5, b'GLU': 6, b'GLN': 7, b'GLY': 8, b'HIS': 9, b'LIE': 10, b'LEU': 11, b'LYS': 12, b'MET': 13, b'PHE': 14, b'PRO': 15, b'SER': 16, b'THR': 17, b'TRP': 18, b'TYR': 19, b'VAL': 20}
 
 atom_dict = {b'C': 1, b'N': 2, b'O': 3, b'ZN': 4}
 
-# returns the average value of matrix elements
+# matrices corresponding to the Mij matrix below
+# hydrogen bond probability matrix
+acid_table0 = []
 
-def coordinates(M, i , j):
-    m, x_sum, y_sum, z_sum = 0
-    while float(M[1][j]) == float(M[1][j + 1]):
-        m = m + 1
-        x_sum = M[i][3] + M[i + 1][3]
-        y_sum = M[i][4] + M[i + 1][4]
-        z_sum = M[i][5] + M[i + 1][5]
-        return m, x_sum, y_sum, z_sum
+# Mij matrix below
+Mij = []
 
+# matrices corresponding to the Hij matrix below
+# matrix for the types of hydrogen bonds
+hamiltonian_table = []
+
+# matrix for the energy levels
+Eij = []
+
+# hamiltonian matrix
+Hij = []
+
+# tensor product for acid_table0 and Eij
+Aij = []
+
+# matrix for the Kronecker delta
+Rij = []
+
+# tensor product for Mij and Kij
+Dij = []
+
+# Energy corresponding to the sidechains
+Hsc = []
+
+Es = []
+
+S = 0
+
+# split the sidechain probability table
+acids0 = lines0[0].split()
+
+# split the amino acid list
+seq_list = seq_string.split()
+
+# parameters for the Hij matrix below
+n = len(seq_list)
+seq_index = []
+
+# construct the hydrogen bond probability matrix
+for line0 in lines0[1:]:
+    row0 = line0.split()[1:]
+    numbers0 = list(map(float,row0))
+    acid_table0.append(numbers0)
+
+# construct the matrix for the types of hydrogen bonds
+for line in lines[1:]:
+    row = line.split()[1:]
+    letters = list(map(str,row))
+    hamiltonian_table.append(letters)
+
+# construct the matrix for the energy levels
+for i in range(n):
+    Eij.append([])
+    for j in range(n):
+        prob = hamiltonian_table[i][j]
+        if prob == "N":
+            prob2 = -1.64013e-22
+            Eij[i].append(prob2)
+        elif prob == "O":
+            prob2 = -2.09727e-22
+            Eij[i].append(prob2)
+        elif prob == "P":
+            prob2 = 0.0
+            Eij[i].append(prob2)
+        else:
+            prob2 = 0.0
+            Eij[i].append(prob2)
+
+
+# tensor product of acid_table0 and Eij
+for i in range(n):
+    Aij.append([])
+    for j in range(n):
+            prob = acid_table0[i][j]*Eij[i][j]
+            Aij[i].append(prob)
+
+# tensor product of acid_table0 and Eij
+for i in range(n):
+    Aij.append([])
+    for j in range(n):
+            prob = acid_table0[i][j]*Eij[i][j]
+            Aij[i].append(prob)
 
 # bioinformatics pipeline
-def pipeline():
-
+def clean_cifs():
+    count = 0
     # open a new csv file protein_coordinates.csv
     with open('protein_coordinates.csv','w') as csvfile:
         writer = csv.writer(csvfile)
@@ -56,26 +152,8 @@ def pipeline():
 
             # construct the block for the coordinate data below
             arr = genfromtxt('protein_coordinates.csv', delimiter=',', dtype=object)
+            
+            print(count)
+            count = count + 1
 
-            print (arr.shape)
-            print (arr)
-            print (arr[0,0])
-
-            print (type(arr[0,0]))
-                    
-            test = arr[:,0]
-            print (test)
-
-            for elem in aa_dict:
-                mask = (arr[:,1] == elem)
-                test = arr[mask,:]
-                print (test.shape)
-                print (test)
-
-                test2 = test[:,2]
-                print (test2)
-
-                test3 = test2.astype(float)
-                print (test3)
-
-                print (test3.mean())
+            cif_block.find_loop_item('entity_poly_seq.mon_id')
