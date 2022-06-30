@@ -44,13 +44,15 @@ atom_filter = {b'C' , b'N' , b'O' , b'ZN'}
 
 aa_filter = {b'ALA', b'ARG', b'ASN', b'ASP', b'CYS', b'GLU', b'GLN', b'GLY', b'HIS', b'LIE', b'LEU', b'LYS', b'MET', b'PHE', b'PRO', b'SER', b'THR', b'TRP', b'TYR', b'VAL'}
 
-Aij = []
+A = []
 
-Eij = []
+E = []
 
 aa_table = []
 
 h_table = []
+
+M = []
 
 # split the sidechain probability table
 acids0 = lines0[0].split()
@@ -76,39 +78,42 @@ for line in lines[1:]:
 
 # construct the matrix for the energy levels
 for i in range(n):
-    Eij.append([])
+    E.append([])
     for j in range(n):
         prob = h_table[i][j]
         if prob == "N":
             prob2 = -1.64013e-22
-            Eij[i].append(prob2)
+            E[i].append(prob2)
         elif prob == "O":
             prob2 = -2.09727e-22
-            Eij[i].append(prob2)
+            E[i].append(prob2)
         elif prob == "P":
             prob2 = 0.0
-            Eij[i].append(prob2)
+            E[i].append(prob2)
         else:
             prob2 = 0.0
-            Eij[i].append(prob2)
+            E[i].append(prob2)
 
 
 # tensor product of acid_table0 and Eij
 for i in range(n):
-    Aij.append([])
+    A.append([])
     for j in range(n):
-            prob = aa_table[i][j]*Eij[i][j]
-            Aij[i].append(prob)
+            prob = aa_table[i][j]*E[i][j]
+            A[i].append(prob)
 
 # tensor product of acid_table0 and Eij
 for i in range(n):
-    Aij.append([])
+    A.append([])
     for j in range(n):
-            prob = aa_table[i][j]*Eij[i][j]
-            Aij[i].append(prob)
+            prob = aa_table[i][j]*E[i][j]
+            A[i].append(prob)
 
 # bioinformatics pipeline
-def get_data():
+def pipeline():
+
+    """first stage of the pipeline: obtain the data"""
+
     # open a new csv file protein_coordinates.csv
     with open('protein_coordinates.csv','w') as csvfile:
         writer = csv.writer(csvfile)
@@ -128,7 +133,17 @@ def get_data():
 
             # write each row in every cif file to the csv file protein_coordinates.csv
             for row in table:
-                writer.writerow(str(row) + str(os.path.basename(path)))
+                writer.writerow(row)
 
-            #arr = genfromtxt('protein_coordinates.csv', delimiter=',', dtype=object)
+            arr = genfromtxt('protein_coordinates.csv', delimiter=',', dtype=object)
+            
 
+            """second stage of the pipeline: clean the data"""
+
+            for amino in aa_filter:
+                arr[i,:] = np.where(arr != amino,b'Img',arr)
+
+            for atom in atom_filter:
+                arr = np.where(arr != atom,b'Img',arr)
+
+            """third stage of the pipeline: analyze the data"""
