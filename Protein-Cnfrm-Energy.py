@@ -5,18 +5,13 @@ from __future__ import print_function
 import sys
 import os
 from collections import Counter
-import gemmi
 from gemmi import cif, CifWalk, expand_if_pdb_code
 import numpy as np
-import csv
-from csv import DictWriter
+from numpy import genfromtxt
 
-""" import the following files containing:
-(1) the list of amino acids
-(2) the table for the different types of combinations of hydrogen bonds between a pair of amino acids (20x20 matrix)
-(3) the table for the probability that a given hydrogen bond will form between two amino acids (20x20 matrix)
-(4) import the variables for the sidechain sidechain matrix """
+
 import sc_imports
+from obtain_monomer_coordinates import coordinates
 
 # this function returns the path from a directory specified by the user otherwise it will return the pdb code
 def get_file_paths_from_args():
@@ -48,13 +43,10 @@ with open('protein_coordinate_database.csv', 'w') as csvfile:
         # there is a new column added to this database that contains the name of the protein
         for row in table:
             writer.writerow(str(row) + str(os.path.basename(path)))
-<<<<<<< HEAD
 
 path_to_csv = os.path.join('.','protein_database.csv')
-=======
             print(n)
             n = n +1
 
 read(os.path.join('.',
         'protein_database.csv'))
->>>>>>> a3dc3fbb07c4d60ca58ad80424208e1c2c6a3555
