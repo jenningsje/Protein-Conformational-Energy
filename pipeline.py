@@ -9,6 +9,7 @@ import numpy as np
 from numpy import genfromtxt
 import subprocess
 import scanpy
+import array
 
 import acid_atom_to_num
 import forge_database
@@ -44,16 +45,16 @@ atom_filter = {b'C' , b'N' , b'O' , b'ZN'}
 
 aa_filter = {b'ALA', b'ARG', b'ASN', b'ASP', b'CYS', b'GLU', b'GLN', b'GLY', b'HIS', b'LIE', b'LEU', b'LYS', b'MET', b'PHE', b'PRO', b'SER', b'THR', b'TRP', b'TYR', b'VAL'}
 
-Aij = []
+A_old = []
 
-Eij = []
+E_old = []
 
-aa_table = []
+aa_table_old = []
 
-h_table = []
+h_table_old = []
 
 # split the sidechain probability table
-acids0 = lines0[0].split()
+acids = lines[0].split()
 
 # split the amino acid list
 seq_list = seq_string.split()
@@ -66,50 +67,46 @@ seq_index = []
 for line0 in lines0[1:]:
     row0 = line0.split()[1:]
     numbers0 = list(map(float,row0))
-    aa_table.append(numbers0)
+    aa_table_old.append(numbers0)
 
 # construct the matrix for the types of hydrogen bonds
 for line in lines[1:]:
     row = line.split()[1:]
     letters = list(map(str,row))
-    h_table.append(letters)
+    h_table_old.append(letters)
 
 # construct the matrix for the energy levels
 for i in range(n):
-    Eij.append([])
+    E_old.append([])
     for j in range(n):
-        prob = h_table[i][j]
+        prob = h_table_old[i][j]
         if prob == "N":
             prob2 = -1.64013e-22
-            Eij[i].append(prob2)
+            E_old[i].append(prob2)
         elif prob == "O":
             prob2 = -2.09727e-22
-            Eij[i].append(prob2)
+            E_old[i].append(prob2)
         elif prob == "P":
             prob2 = 0.0
-            Eij[i].append(prob2)
+            E_old[i].append(prob2)
         else:
             prob2 = 0.0
-            Eij[i].append(prob2)
-
-
-# tensor product of acid_table0 and Eij
-for i in range(n):
-    Aij.append([])
-    for j in range(n):
-            prob = aa_table[i][j]*Eij[i][j]
-            Aij[i].append(prob)
+            E_old[i].append(prob2)
 
 # tensor product of acid_table0 and Eij
 for i in range(n):
-    Aij.append([])
+    A_old.append([])
     for j in range(n):
-            prob = aa_table[i][j]*Eij[i][j]
-            Aij[i].append(prob)
+            prob = aa_table_old[i][j]*E_old[i][j]
+            A_old[i].append(prob)
+
+aa_table = np.array(aa_table_old)
+h_table = np.array(h_table_old)
+E = np.array(E_old)
 
 # bioinformatics pipeline
 def get_data():
-    count = 0
+    n = 0
     # open a new csv file protein_coordinates.csv
     with open('protein_coordinates.csv','w') as csvfile:
         writer = csv.writer(csvfile)
@@ -129,20 +126,13 @@ def get_data():
 
             # write each row in every cif file to the csv file protein_coordinates.csv
             for row in table:
-                writer.writerow(row)
-
-            # construct the block for the coordinate data below
-            arr = genfromtxt('protein_coordinates.csv', delimiter=',', dtype=object)
-            
-
-            # 
-    path_to_csv = os.path.join('.','protein_database.csv')
+                    writer.writerows(str(row))
 
 def clean_data():
 
     atom_filter = {b'C' , b'N' , b'O' , b'ZN'}
 
-    aa_filter = {b'ALA', b'ARG', b'ASN', b'ASP', b'CYS', b'GLU', b'GLN', b'GLY', b'HIS',
+    aa_filter = {b'ALA', b'ARG', b'ASN', b'ASP', b'CYS', b'GLU', b'GLN', b'GLY', b'HIS', 
     b'LIE', b'LEU', b'LYS', b'MET', b'PHE', b'PRO', b'SER', b'THR', b'TRP', b'TYR', b'VAL'}
 
     with open('protein_coordinate_database.csv', 'w') as csvfile:
