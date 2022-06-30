@@ -48,5 +48,13 @@ with open('protein_coordinate_database.csv', 'w') as csvfile:
         # there is a new column added to this database that contains the name of the protein
         for row in table:
             writer.writerow(str(row) + str(os.path.basename(path)))
+<<<<<<< HEAD
 
 path_to_csv = os.path.join('.','protein_database.csv')
+=======
+            print(n)
+            n = n +1
+
+read(os.path.join('.',
+        'protein_database.csv'))
+>>>>>>> a3dc3fbb07c4d60ca58ad80424208e1c2c6a3555
