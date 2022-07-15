@@ -137,13 +137,15 @@ def pipeline():
 
             arr = genfromtxt('protein_coordinates.csv', delimiter=',', dtype=object)
             
-
             """second stage of the pipeline: clean the data"""
 
             for amino in aa_filter:
-                arr[i,:] = np.where(arr != amino,b'Img',arr)
+                arr = np.where(arr != amino,b'Img',arr)
 
             for atom in atom_filter:
                 arr = np.where(arr != atom,b'Img',arr)
 
             """third stage of the pipeline: analyze the data"""
+
+            for row in range(1,len(arr)):
+                aa_pos = Entropy.AcidPos(row,arr)
