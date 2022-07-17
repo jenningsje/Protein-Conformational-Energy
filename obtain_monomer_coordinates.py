@@ -140,12 +140,14 @@ def pipeline():
             """second stage of the pipeline: clean the data"""
 
             for amino in aa_filter:
-                arr = np.where(arr != amino,b'Img',arr)
+                np.masked_where(arr != amino, arr)
 
             for atom in atom_filter:
-                arr = np.where(arr != atom,b'Img',arr)
+                np.masked_where(arr != atom, arr)
 
             """third stage of the pipeline: analyze the data"""
+
+            aa_posns = []
 
             for row in range(1,len(arr)):
                 aa_pos = Entropy.AcidPos(row,arr)
