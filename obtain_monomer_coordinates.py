@@ -10,10 +10,12 @@ from numpy import genfromtxt
 import subprocess
 import scanpy
 import string
+import numpy.ma as ma
 
 import acid_atom_to_num
 import forge_database
 from forge_database import get_file_paths_from_args
+import entropies
 
 # import text files
 
@@ -140,14 +142,12 @@ def pipeline():
             """second stage of the pipeline: clean the data"""
 
             for amino in aa_filter:
-                np.masked_where(arr != amino, arr)
+                ma.masked_where(arr != amino, arr)
 
             for atom in atom_filter:
-                np.masked_where(arr != atom, arr)
+                ma.masked_where(arr != atom, arr)
 
             """third stage of the pipeline: analyze the data"""
 
             aa_posns = []
-
-            for row in range(1,len(arr)):
-                aa_pos = Entropy.AcidPos(row,arr)
+            obj = entropies.Entropy()
