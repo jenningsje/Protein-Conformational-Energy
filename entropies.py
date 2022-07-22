@@ -1,23 +1,45 @@
 import numpy as np
 import math
+import statistics
 
 # create the classes for the entropic corrections to the side chain and backbone entropies
 
-class Entropy:
+def AcidPos(i,NParray):
+    # filter for only a given amino acid
+    mask = (float(NParray[i][2]) == float(NParray[i + 1][2]))
+    masked_arr = NParray[mask,:]
+    # find the amino acid coordinates
+    x_amino = statistics.mean(masked_arr[i][3])
+    y_amino = statistics.mean(masked_arr[i][4])
+    z_amino = statistics.mean(masked_arr[i][5])
+    # find the distance of the amino acid from the origin
+    R = ((x_amino, 2) + pow(y_amino, 2) + pow(z_amino, 2))
+    return R
 
-    NHbond = -6.66101*(10**(-19))
-    OHbond = -5.21342*(10**(-19))
+def delta(ri,rj,dmin,dmax):
+    mask = (dmin <= ri[i] - rj[j] <= dmax)
+    return mask
 
-    def AcidPos(i,NParray):
-        # filter for only a given amino acid
-            mask(NParray[i][2]) == float(NParray[i + 1][2]):
-            masked_arr = NParray[mask,:]
-        # find the amino acid coordinates
-            x_amino = mean(masked_arr[i][3])
-            y_amino = mean(masked_arr[i][4])
-            z_amino = mean(masked_arr[i][5])
-        # find the distance of the amino acid from the origin
-            R = ((x_amino, 2) + pow(y_amino, 2) + pow(z_amino, 2))
-            return R
+def sidechain(char_ij,prob):
+    out = size(char)
+    # Oxygen bonds
+    mask1(char_ij == 'O')
+    out[i][j] = 2.09727e-22
+    # Nitrogen bonds
+    mask2(char_ij == 'N')
+    out[i][j] = -1.64013e-22
+    # No hydrogen bonds present
+    mask3(char_ij != 'O' and char_ij != 'N')
 
-    def delta(ri,rj)
+def backbone(NParray,r1,r2,dmin,dmax,i,j):
+    out = size(NParray)
+    # Beta conformation
+    mask1 = (dmin <= r1[i] - r2[j] <= dmax
+    and dmin <= r1[i + 1] - r2[j + 1] <= dmax
+    and dmin <= r1[i + 2] - r2[j + 1] <= dmax)
+    out[i][j] = 1
+    # Beta conformation
+    mask2 = (dmin <= r1[i] - r2[j] <= dmax
+    and dmin <= r1[i + 1] - r2[j - 1] <= dmax
+    and dmin <= r1[i + 2] - r2[j - 2] <= dmax)
+    out[i][j]

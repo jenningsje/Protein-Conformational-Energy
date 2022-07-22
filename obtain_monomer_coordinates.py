@@ -10,10 +10,13 @@ from numpy import genfromtxt
 import subprocess
 import scanpy
 import string
+import numpy.ma as ma
+import statistics
 
 import acid_atom_to_num
 import forge_database
 from forge_database import get_file_paths_from_args
+from entropies import AcidPos
 
 # import text files
 
@@ -136,18 +139,15 @@ def pipeline():
                 writer.writerow(row)
 
             arr = genfromtxt('protein_coordinates.csv', delimiter=',', dtype=object)
-            
+
             """second stage of the pipeline: clean the data"""
 
-            for amino in aa_filter:
-                np.masked_where(arr != amino, arr)
-
-            for atom in atom_filter:
-                np.masked_where(arr != atom, arr)
+            ma.masked_where(np.isin(arr, aa_filter), arr)
+            ma.masked_where(np.isin(arr, atom_filter), arr)
 
             """third stage of the pipeline: analyze the data"""
 
             aa_posns = []
 
-            for row in range(1,len(arr)):
-                aa_pos = Entropy.AcidPos(row,arr)
+            for i in range(len(arr)):
+                print(AcidPos(i,arr))
