@@ -6,15 +6,10 @@ import statistics
 
 def AcidPos(i,NParray):
     # filter for only a given amino acid
-    mask = (float(NParray[i][2]) == float(NParray[i + 1][2]))
+    mask = ((NParray[i][1]) == (NParray[i + 1][1]))
     masked_arr = NParray[mask,:]
     # find the amino acid coordinates
-    x_amino = statistics.mean(masked_arr[i][3])
-    y_amino = statistics.mean(masked_arr[i][4])
-    z_amino = statistics.mean(masked_arr[i][5])
-    # find the distance of the amino acid from the origin
-    R = ((x_amino, 2) + pow(y_amino, 2) + pow(z_amino, 2))
-    return R
+    return masked_arr
 
 def delta(ri,rj,dmin,dmax):
     mask = (dmin <= ri[i] - rj[j] <= dmax)
