@@ -153,3 +153,5 @@ def pipeline():
             """third stage of the pipeline: analyze the data"""
 
             sequence = cif_block.find_loop_item('_entity_poly_seq.mon_id').loop
+            seq_indices = cif_block.find_loop_item('_entity_poly_seq.num').loop
+
