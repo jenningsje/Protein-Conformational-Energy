@@ -42,13 +42,13 @@ seq_file.close()
 
 # create dictionaries
 
-aa_dict = {b'ALA': 1, b'ARG': 2, b'ASN': 3, b'ASP': 4, b'CYS': 5, b'GLU': 6, b'GLN': 7, b'GLY': 8, b'HIS': 9, b'LIE': 10, b'LEU': 11, b'LYS': 12, b'MET': 13, b'PHE': 14, b'PRO': 15, b'SER': 16, b'THR': 17, b'TRP': 18, b'TYR': 19, b'VAL': 20, b'None': 21}
+aa_dict_b = {b'ALA': 1, b'ARG': 2, b'ASN': 3, b'ASP': 4, b'CYS': 5, b'GLU': 6, b'GLN': 7, b'GLY': 8, b'HIS': 9, b'LIE': 10, b'LEU': 11, b'LYS': 12, b'MET': 13, b'PHE': 14, b'PRO': 15, b'SER': 16, b'THR': 17, b'TRP': 18, b'TYR': 19, b'VAL': 20}
 
-atom_dict = {b'C': 1, b'N': 2, b'O': 3, b'ZN': 4, b'None': 5}
+atom_dict_b = {b'C': 1, b'N': 2, b'O': 3, b'ZN': 4}
 
-atom_filter = {b'C' , b'N' , b'O' , b'ZN'}
+aa_dict = {'ALA': 1, 'ARG': 2, 'ASN': 3, 'ASP': 4, 'CYS': 5, 'GLU': 6, 'GLN': 7, 'GLY': 8, 'HIS': 9, 'LIE': 10, 'LEU': 11, 'LYS': 12, 'MET': 13, 'PHE': 14, 'PRO': 15, 'SER': 16, 'THR': 17, 'TRP': 18, 'TYR': 19, 'VAL': 20}
 
-aa_filter = {b'ALA', b'ARG', b'ASN', b'ASP', b'CYS', b'GLU', b'GLN', b'GLY', b'HIS', b'LIE', b'LEU', b'LYS', b'MET', b'PHE', b'PRO', b'SER', b'THR', b'TRP', b'TYR', b'VAL'}
+atom_dict_b = {'C': 1, 'N': 2, 'O': 3, 'ZN': 4}
 
 A = []
 
@@ -137,7 +137,7 @@ def pipeline():
 
             # obtain the following x, y, z coordinates, aa names and atoms for the protein given in path
             table = cif_block.find(['_atom_site.type_symbol', '_atom_site.label_comp_id',
-            '_atom_site.Cartn_x', '_atom_site.Cartn_y', '_atom_site.Cartn_z'])
+            '_atom_site.Cartn_x', '_atom_site.Cartn_y', '_atom_site.Cartn_z', '_atom_site.pdbx_PDB_model_num'])
 
             # write each row in every cif file to the csv file protein_coordinates.csv
             for row in table:
@@ -145,13 +145,16 @@ def pipeline():
 
             arr = genfromtxt('protein_coordinates.csv', delimiter=',', dtype=object)
 
-            """second stage of the pipeline: clean the data"""
-
-            ma.masked_where(np.isin(arr, aa_filter), arr)
-            ma.masked_where(np.isin(arr, atom_filter), arr)
-
-            """third stage of the pipeline: analyze the data"""
-
             sequence = cif_block.find_loop_item('_entity_poly_seq.mon_id').loop
             seq_indices = cif_block.find_loop_item('_entity_poly_seq.num').loop
 
+            """second stage of the pipeline: clean the data"""
+
+            ma.masked_where(np.isin(arr, aa_dict_b), arr)
+            ma.masked_where(np.isin(arr, atom_dict_b), arr)
+
+            """third stage of the pipeline: analyze the data"""
+
+            for i in range(len(seq_indices)):
+                for j in range(len(seq_indices)):
+                    M[i].append(acid_table[seq_indices[i]][seq_indices[j]])
