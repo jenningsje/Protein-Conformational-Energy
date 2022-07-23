@@ -60,6 +60,8 @@ h_table = []
 
 M = []
 
+seq_indices = []
+
 # split the sidechain probability table
 acids0 = lines0[0].split()
 
@@ -150,7 +152,4 @@ def pipeline():
 
             """third stage of the pipeline: analyze the data"""
 
-            aa_posns = []
-
-            mask = (arr[:,1] == arr[:,1])
-            masked_arr = arr[mask,:]
+            sequence = cif_block.find_loop_item('_entity_poly_seq.mon_id').loop
