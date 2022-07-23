@@ -12,6 +12,9 @@ import scanpy
 import string
 import numpy.ma as ma
 import statistics
+import pandas as pd
+import math
+import statistics
 
 import acid_atom_to_num
 import forge_database
@@ -149,5 +152,5 @@ def pipeline():
 
             aa_posns = []
 
-            for i in range(len(arr)):
-                print(AcidPos(i,arr))
+            mask = (arr[:,1] == arr[:,1])
+            masked_arr = arr[mask,:]
