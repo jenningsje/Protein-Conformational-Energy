@@ -11,7 +11,9 @@ from numpy import genfromtxt
 
 
 import sc_imports
-from obtain_monomer_coordinates import pipeline
+from obtain_monomer_coordinates import obtain_data
+from obtain_monomer_coordinates import clean_data
 
-# get the names of each protein as well as the monomer coordinates for them
-pipeline()
+# run the pipeline
+obtain_data()
+clean_data(coordinate_database)
