@@ -15,6 +15,7 @@ import statistics
 import pandas as pd
 import math
 import statistics
+import numpy.ma as ma
 
 import acid_atom_to_num
 import forge_database
@@ -40,7 +41,13 @@ seq_file = open("list.txt")
 seq_string = seq_file.read()
 seq_file.close()
 
-aa_dict = {'ALA': 1, 'ARG': 2, 'ASN': 3, 'ASP': 4, 'CYS': 5, 'GLU': 6, 'GLN': 7, 'GLY': 8, 'HIS': 9, 'LIE': 10, 'LEU': 11, 'LYS': 12, 'MET': 13, 'PHE': 14, 'PRO': 15, 'SER': 16, 'THR': 17, 'TRP': 18, 'TYR': 19, 'VAL': 20}
+# create dictionaries
+
+aa_dict_b = {b'ALA': 1, b'ARG': 2, b'ASN': 3, b'ASP': 4, b'CYS': 5, b'GLU': 6, b'GLN': 7, b'GLY': 8, b'HIS': 9, b'LIE': 10, b'LEU': 11, b'LYS': 12, b'MET': 13, b'PHE': 14, b'PRO': 15, b'SER': 16, b'THR': 17, b'TRP': 18, b'TYR': 19, b'VAL': 20, np.nan: 21}
+
+atom_dict_b = {b'C': 1, b'N': 2, b'O': 3, b'ZN': 4, np.nan: 5}
+
+aa_dict = {"ALA": 1, "ARG": 2, "ASN": 3, "ASP": 4, "CYS": 5, "GLU": 6, "GLN": 7, "GLY": 8, "HIS": 9, "LIE": 10, "LEU": 11, "LYS": 12, "MET": 13, "PHE": 14, "PRO": 15, "SER": 16, "THR": 17, "TRP": 18, "TYR": 19, "VAL": 20}
 
 atom_dict_b = {'C': 1, 'N': 2, 'O': 3, 'ZN': 4}
 
@@ -51,10 +58,6 @@ E = []
 aa_table = []
 
 h_table = []
-
-M = []
-
-seq_indices = []
 
 # split the sidechain probability table
 acids0 = lines0[0].split()
@@ -111,12 +114,10 @@ for i in range(n):
             prob = aa_table[i][j]*E[i][j]
             A[i].append(prob)
 
-arr1 = [[b'_atom_site.type_symbol', b'_atom_site.label_seq_id', b'_atom_site.label_comp_id', b'_atom_site.Cartn_x', b'_atom_site.Cartn_y', b'_atom_site.Cartn_z', b'_atom_site.pdbx_PDB_model_num']]
+# bioinformatics pipeline
+def pipeline():
 
-"""bioinformatics pipeline"""
-
-# first stage of the pipeline obtain the data
-def obtain_data():
+    """first stage of the pipeline: obtain the data"""
 
     # open a new csv file protein_coordinates.csv
     with open('protein_coordinates.csv','w') as csvfile:
@@ -132,34 +133,21 @@ def obtain_data():
             # first phase of the bioinformatics pipeline:
 
             # obtain the following x, y, z coordinates, aa names and atoms for the protein given in path
-            table = cif_block.find(['_atom_site.type_symbol', '_atom_site.label_seq_id', '_atom_site.label_comp_id',
+            table = cif_block.find(['_atom_site.type_symbol', '_atom_site.label_comp_id',
             '_atom_site.Cartn_x', '_atom_site.Cartn_y', '_atom_site.Cartn_z', '_atom_site.pdbx_PDB_model_num'])
 
             # write each row in every cif file to the csv file protein_coordinates.csv
             for row in table:
                 writer.writerow(row)
 
-            arr2 = genfromtxt('protein_coordinates.csv', delimiter=',', dtype=object)
+            arr = genfromtxt('protein_coordinates.csv', delimiter=',', dtype=object)
 
-            np.append(arr1, arr2, axis=0)
+            """second stage of the pipeline: clean the data"""
 
-            DF = pd.DataFrame(arr2)
+            arr1 = ma.masked_where(np.isin(arr, aa_dict_b), arr)
+            arr2 = ma.masked_where(np.isin(arr1, atom_dict_b), arr1)
 
-            DF.to_csv('coordinate_database')
+            """third stage of the pipeline: analyze the data"""
 
-def clean_data():
-
-    # amino acid indices
-    aa_dict_b = {b'ALA': 1, b'ARG': 2, b'ASN': 3, b'ASP': 4, 
-    b'CYS': 5, b'GLU': 6, b'GLN': 7, b'GLY': 8, b'HIS': 9, 
-    b'LIE': 10, b'LEU': 11, b'LYS': 12, b'MET': 13, 
-    b'PHE': 14, b'PRO': 15, b'SER': 16, b'THR': 17, b'TRP': 
-    18, b'TYR': 19, b'VAL': 20}
-
-    # atom indices
-    atom_dict_b = {b'C': 1, b'N': 2, b'O': 3, b'ZN': 4}
-
-    ma.masked_where(np.isin(database, aa_filter), arr)
-    ma.masked_Where(np.isin(database, atom_filter, arr))
-
-    return database
+            for i in range(len(arr2)):
+                print(arr2[i][1])
