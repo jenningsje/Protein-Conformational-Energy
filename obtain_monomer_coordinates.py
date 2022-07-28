@@ -15,6 +15,7 @@ import statistics
 import pandas as pd
 import math
 import statistics
+import numpy.ma as ma
 
 import acid_atom_to_num
 import forge_database
@@ -42,9 +43,9 @@ seq_file.close()
 
 # create dictionaries
 
-aa_dict_b = {b'ALA': 1, b'ARG': 2, b'ASN': 3, b'ASP': 4, b'CYS': 5, b'GLU': 6, b'GLN': 7, b'GLY': 8, b'HIS': 9, b'LIE': 10, b'LEU': 11, b'LYS': 12, b'MET': 13, b'PHE': 14, b'PRO': 15, b'SER': 16, b'THR': 17, b'TRP': 18, b'TYR': 19, b'VAL': 20}
+aa_dict_b = {b'ALA': 1, b'ARG': 2, b'ASN': 3, b'ASP': 4, b'CYS': 5, b'GLU': 6, b'GLN': 7, b'GLY': 8, b'HIS': 9, b'LIE': 10, b'LEU': 11, b'LYS': 12, b'MET': 13, b'PHE': 14, b'PRO': 15, b'SER': 16, b'THR': 17, b'TRP': 18, b'TYR': 19, b'VAL': 20, np.nan: 21}
 
-atom_dict_b = {b'C': 1, b'N': 2, b'O': 3, b'ZN': 4}
+atom_dict_b = {b'C': 1, b'N': 2, b'O': 3, b'ZN': 4, np.nan: 5}
 
 aa_dict = {"ALA": 1, "ARG": 2, "ASN": 3, "ASP": 4, "CYS": 5, "GLU": 6, "GLN": 7, "GLY": 8, "HIS": 9, "LIE": 10, "LEU": 11, "LYS": 12, "MET": 13, "PHE": 14, "PRO": 15, "SER": 16, "THR": 17, "TRP": 18, "TYR": 19, "VAL": 20}
 
@@ -57,8 +58,6 @@ E = []
 aa_table = []
 
 h_table = []
-
-seq_indices = []
 
 # split the sidechain probability table
 acids0 = lines0[0].split()
@@ -145,14 +144,10 @@ def pipeline():
 
             """second stage of the pipeline: clean the data"""
 
-            ma.masked_where(np.isin(arr, aa_dict_b), arr)
-            ma.masked_where(np.isin(arr, atom_dict_b), arr)
+            arr1 = ma.masked_where(np.isin(arr, aa_dict_b), arr)
+            arr2 = ma.masked_where(np.isin(arr1, atom_dict_b), arr1)
 
             """third stage of the pipeline: analyze the data"""
 
-            for i in range(len(seq)):
-                aai0 = str(seq[i])
-                aai1 = aai0.replace('<gemmi.cif.Table.Row:','')
-                aai2 = aai1.replace('>','')
-                aai3 = aai2.replace(' ','')
-                print(aa_dict[aai3])
+            for i in range(len(arr2)):
+                print(arr2[i][1])
