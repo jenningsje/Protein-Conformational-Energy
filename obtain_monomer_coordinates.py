@@ -154,4 +154,5 @@ def pipeline():
 
             """third stage of the pipeline: analyze the data"""
 
-            print(seq_indices)
+            print(len(arr))
+            print(len(seq_indices))
