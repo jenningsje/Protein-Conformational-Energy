@@ -16,11 +16,11 @@ import pandas as pd
 import math
 import statistics
 import numpy.ma as ma
+import array as arr
 
 import acid_atom_to_num
 import forge_database
 from forge_database import get_file_paths_from_args
-from entropies import AcidPos
 
 # import text files
 
@@ -43,13 +43,13 @@ seq_file.close()
 
 # create dictionaries
 
-aa_dict_b = {b'ALA': 1, b'ARG': 2, b'ASN': 3, b'ASP': 4, b'CYS': 5, b'GLU': 6, b'GLN': 7, b'GLY': 8, b'HIS': 9, b'LIE': 10, b'LEU': 11, b'LYS': 12, b'MET': 13, b'PHE': 14, b'PRO': 15, b'SER': 16, b'THR': 17, b'TRP': 18, b'TYR': 19, b'VAL': 20, np.nan: 21}
+aa_dict_b = {b'ALA': 1, b'ARG': 2, b'ASN': 3, b'ASP': 4, b'CYS': 5, b'GLU': 6, b'GLN': 7, b'GLY': 8, b'HIS': 9, b'LIE': 10, b'LEU': 11, b'LYS': 12, b'MET': 13, b'PHE': 14, b'PRO': 15, b'SER': 16, b'THR': 17, b'TRP': 18, b'TYR': 19, b'VAL': 20}
 
-atom_dict_b = {b'C': 1, b'N': 2, b'O': 3, b'ZN': 4, np.nan: 5}
+atom_dict_b = {b'C': 1, b'N': 2, b'O': 3, b'ZN': 4, b'None': 5}
 
-aa_dict = {"ALA": 1, "ARG": 2, "ASN": 3, "ASP": 4, "CYS": 5, "GLU": 6, "GLN": 7, "GLY": 8, "HIS": 9, "LIE": 10, "LEU": 11, "LYS": 12, "MET": 13, "PHE": 14, "PRO": 15, "SER": 16, "THR": 17, "TRP": 18, "TYR": 19, "VAL": 20}
+aa_filter = {"ALA", "ARG", "ASN", "ASP", "CYS", "GLU", "GLN", "GLY", "HIS", "LIE", "LEU", "LYS", "MET", "PHE", "PRO", "SER", "THR", "TRP", "TYR", "VAL"}
 
-atom_dict_b = {'C': 1, 'N': 2, 'O': 3, 'ZN': 4}
+atom_filter = {'C', 'N', 'O', 'ZN'}
 
 A = []
 
@@ -144,10 +144,14 @@ def pipeline():
 
             """second stage of the pipeline: clean the data"""
 
-            arr1 = ma.masked_where(np.isin(arr, aa_dict_b), arr)
-            arr2 = ma.masked_where(np.isin(arr1, atom_dict_b), arr1)
+            seq_indices = []
+
+            for i in range(len(arr)):
+                if arr[i][1] not in aa_dict_b:
+                    seq_indices.append(b'None')
+                elif arr[i][1] in aa_dict_b:
+                    seq_indices.append(aa_dict_b[arr[i][1]])
 
             """third stage of the pipeline: analyze the data"""
 
-            for i in range(len(arr2)):
-                print(arr2[i][1])
+            print(seq_indices)
