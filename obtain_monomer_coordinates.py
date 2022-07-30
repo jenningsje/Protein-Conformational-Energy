@@ -145,6 +145,7 @@ def pipeline():
             """second stage of the pipeline: clean the data"""
 
             seq_indices = []
+            M = np.empty(shape=(len(arr),len(arr)))
 
             for i in range(len(arr)):
                 if arr[i][1] not in aa_dict_b:
@@ -156,3 +157,6 @@ def pipeline():
 
             print(len(arr))
             print(len(seq_indices))
+
+            for i in range(len(arr)):
+                for j in range(len(arr)):
