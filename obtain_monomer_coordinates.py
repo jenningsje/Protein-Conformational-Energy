@@ -145,18 +145,21 @@ def pipeline():
             """second stage of the pipeline: clean the data"""
 
             seq_indices = []
-            M = np.empty(shape=(len(arr),len(arr)))
+            M = []
 
             for i in range(len(arr)):
                 if arr[i][1] not in aa_dict_b:
-                    seq_indices.append(b'None')
+                    seq_indices.append(21)
                 elif arr[i][1] in aa_dict_b:
                     seq_indices.append(aa_dict_b[arr[i][1]])
 
+            print(seq_indices)
+            print(aa_table[20][20])
+            print(aa_table[0][0])
+
             """third stage of the pipeline: analyze the data"""
 
-            print(len(arr))
-            print(len(seq_indices))
-
             for i in range(len(arr)):
+                M.append([])
                 for j in range(len(arr)):
+                    M[i].append(aa_table[seq_indices[i] - 1][seq_indices[j] - 1])
